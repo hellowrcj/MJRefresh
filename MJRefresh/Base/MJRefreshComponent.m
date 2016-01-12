@@ -96,6 +96,7 @@
 
 - (void)removeObservers
 {
+    // 不直接使用_scrollView, 用superview ??
     [self.superview removeObserver:self forKeyPath:MJRefreshKeyPathContentOffset];
     [self.superview removeObserver:self forKeyPath:MJRefreshKeyPathContentSize];;
     [self.pan removeObserver:self forKeyPath:MJRefreshKeyPathPanState];
@@ -114,6 +115,7 @@
     
     // 看不见
     if (self.hidden) return;
+    
     if ([keyPath isEqualToString:MJRefreshKeyPathContentOffset]) {
         [self scrollViewContentOffsetDidChange:change];
     } else if ([keyPath isEqualToString:MJRefreshKeyPathPanState]) {
@@ -129,14 +131,14 @@
 #pragma mark 设置回调对象和回调方法
 - (void)setRefreshingTarget:(id)target refreshingAction:(SEL)action
 {
-    self.refreshingTarget = target;
-    self.refreshingAction = action;
+    self.refreshingTarget = target; // weak 接收target
+    self.refreshingAction = action; // assign 接收SEL
 }
 
 #pragma mark 进入刷新状态
 - (void)beginRefreshing
 {
-    [UIView animateWithDuration:MJRefreshFastAnimationDuration animations:^{
+    [UIView animateWithDuration:MJRefreshFastAnimationDuration/*0.25*/ animations:^{
         self.alpha = 1.0;
     }];
     self.pullingPercent = 1.0;
@@ -180,7 +182,7 @@
     if (self.isRefreshing) return;
     
     if (automaticallyChangeAlpha) {
-        self.alpha = self.pullingPercent;
+        self.alpha = self.pullingPercent; // 0 -- hide
     } else {
         self.alpha = 1.0;
     }

@@ -14,7 +14,10 @@
 - (void)prepare
 {
     [super prepare];
-    
+    /*
+     1. 继承MJRefreshGifHeader/Footer 类
+     2. 实现其父类``
+     */
     // 设置普通状态的动画图片
     NSMutableArray *idleImages = [NSMutableArray array];
     for (NSUInteger i = 1; i<=60; i++) {
